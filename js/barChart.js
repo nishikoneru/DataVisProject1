@@ -84,10 +84,9 @@ class Barchart {
 	updateVis() {
 	  let vis = this;
   
-	  // Prepare data: count number of trails in each difficulty category
-	  // i.e. [{ key: 'easy', count: 10 }, {key: 'intermediate', ...
+	  // Prepare data
 	  const aggregatedDataMap = d3.rollups(vis.data, v => v.length, d => d[this.column]);
-	  vis.aggregatedData = Array.from(aggregatedDataMap, ([key, count]) => ({ key, count }));
+      vis.aggregatedData = Array.from(aggregatedDataMap, ([key, count]) => ({ key, count }));
   
 	  const orderedKeys = this.config.colorScale.domain();
 	  vis.aggregatedData = vis.aggregatedData.sort((a,b) => {

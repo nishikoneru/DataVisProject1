@@ -1,14 +1,14 @@
-let sysStar;
+let data, sysStar;
 
 /*
  *  Load data from CSV file
  */
 d3.csv('data/exoplanets-1.csv')
-	.then(data => {
+	.then(_data => {
 		//data.forEach(d => {
         // 
 		// });
-
+        data = _data;
         console.log('Data loaded');
 	})
  	.catch(error => {
