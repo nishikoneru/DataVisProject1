@@ -11,7 +11,7 @@ body {
   
   .source {
     font-size: 10px;
-    color: #888;
+    color: #000;
   }
   .source a {
     color: #888;
@@ -25,16 +25,16 @@ body {
   /* Axes */
   .axis line {
     fill: none;
-    stroke: #ddd;
+    stroke: #000;
     shape-rendering: crispEdges;
   }
   .axis text {
-    font-size: 13px;
-    fill: #6b6b6b;
+    font-size: 14px;
+    fill: #000;
   }
   .axis-title {
-    font-size: 13px;
-    fill: #888;
+    font-size: 14px;
+    fill: #000;
   }
   .y-axis .tick:first-child line {
     stroke: #b1b1b1;

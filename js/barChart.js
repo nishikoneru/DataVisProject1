@@ -1,20 +1,19 @@
-class Barchart {
+class BarChart {
 	/**
 	 * Class constructor with basic chart configuration
 	 */
-	constructor(_config, _data, _column, _columnname, _title) {
+	constructor(_config, _data, _column, _columnname) {
 	  // Configuration object with defaults
 	  this.config = {
 		parentElement: _config.parentElement,
 		colorScale: _config.colorScale,
-		containerWidth: _config.containerWidth || 260,
-		containerHeight: _config.containerHeight || 300,
-		margin: _config.margin || {top: 25, right: 20, bottom: 20, left: 40},
+		containerWidth: _config.containerWidth,
+		containerHeight: _config.containerHeight,
+		margin: _config.margin || {top: 50, right: 50, bottom: 50, left: 50},
 	  }
 	  this.data = _data;
 	  this.column = _column;
 	  this.columnname = _columnname;
-	  this.title = _title;
 	  this.initVis();
 	}
 	
@@ -73,7 +72,7 @@ class Barchart {
 	  vis.svg.append('text')
 		  .attr('class', 'axis-title')
 		  .attr('x', 0)
-		  .attr('y', 0)
+		  .attr('y', 20)
 		  .attr('dy', '.71em')
 		  .text(this.columnname);
 	}
@@ -85,13 +84,14 @@ class Barchart {
 	  let vis = this;
   
 	  // Prepare data
-	  const aggregatedDataMap = d3.rollups(vis.data, v => v.length, d => d[this.column]);
+	  console.log(vis.data);
+	  let aggregatedDataMap = d3.rollups(vis.data, v => v.length, d => d[vis.column]);
       vis.aggregatedData = Array.from(aggregatedDataMap, ([key, count]) => ({ key, count }));
-  
-	  const orderedKeys = this.config.colorScale.domain();
-	  vis.aggregatedData = vis.aggregatedData.sort((a,b) => {
-		return orderedKeys.indexOf(a.key) - orderedKeys.indexOf(b.key);
-	  });
+
+      const orderedKeys = this.config.colorScale.domain();
+      vis.aggregatedData = vis.aggregatedData.sort((a,b) => {
+        return orderedKeys.indexOf(a.key) - orderedKeys.indexOf(b.key);
+      });
   
 	  // Specificy accessor functions
 	  vis.colorValue = d => d.key;
