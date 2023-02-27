@@ -1,10 +1,5 @@
 class ScatterPlot {
 
-    /**
-     * Class constructor with basic chart configuration
-     * @param {Object}
-     * @param {Array}
-     */
     constructor(_config, _data) {
       this.config = {
         parentElement: _config.parentElement,
@@ -27,11 +22,6 @@ class ScatterPlot {
       vis.width = vis.config.containerWidth - vis.config.margin.left - vis.config.margin.right;
       vis.height = vis.config.containerHeight - vis.config.margin.top - vis.config.margin.bottom;
   
-      // Initialize scales
-      vis.colorScale = d3.scaleOrdinal()
-          .range(this.config.colorScale.range())
-          .domain(this.config.colorScale.domain());
-  
       vis.xScale = d3.scaleLinear()
           .range([0, vis.width]);
   
@@ -43,7 +33,6 @@ class ScatterPlot {
           .ticks(6)
           .tickSize(-vis.height - 10)
           .tickPadding(10)
-          .tickFormat(d => d + ' km');
   
       vis.yAxis = d3.axisLeft(vis.yScale)
           .ticks(6)
@@ -72,23 +61,30 @@ class ScatterPlot {
       // Append both axis titles
       vis.chart.append('text')
           .attr('class', 'axis-title')
-          .attr('y', vis.height - 15)
+          .attr('y', vis.height)
           .attr('x', vis.width + 10)
           .attr('dy', '.71em')
           .style('text-anchor', 'end')
-          .text('Distance');
+          .text('Radius');
   
       vis.svg.append('text')
           .attr('class', 'axis-title')
           .attr('x', 0)
-          .attr('y', 0)
+          .attr('y', 35)
           .attr('dy', '.71em')
-          .text('Hours');
+          .text('Mass');
+
+      // Append title
+      vis.svg.append('text')
+        .attr('class', 'axis-title')
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('dy', '.71em')
+        .text("Exoplanet Mass vs Radius");
   
       // Specificy accessor functions
-      vis.colorValue = d => d.difficulty;
-      vis.xValue = d => d.time;
-      vis.yValue = d => d.distance;
+      vis.xValue = d => d.st_rad;
+      vis.yValue = d => d.st_mass;
     }
   
     /**
@@ -98,18 +94,18 @@ class ScatterPlot {
       let vis = this;
       
       // Set the scale input domains
-      vis.xScale.domain([0, d3.max(vis.data, vis.xValue)]);
-      vis.yScale.domain([0, d3.max(vis.data, vis.yValue)]);
+      vis.xScale.domain([0, 120]);
+      vis.yScale.domain([0, 12]);
   
       // Add circles
       vis.circles = vis.chart.selectAll('.point')
-          .data(vis.data, d => d.trail)
+          .data(vis.data, d => d.pl_name)
         .join('circle')
           .attr('class', 'point')
           .attr('r', 4)
           .attr('cy', d => vis.yScale(vis.yValue(d)))
           .attr('cx', d => vis.xScale(vis.xValue(d)))
-          .attr('fill', d => vis.colorScale(vis.colorValue(d)));
+          .attr('fill', '#945cb4')
   
   
       // Tooltip event listeners
@@ -120,12 +116,11 @@ class ScatterPlot {
               .style('left', (event.pageX + vis.config.tooltipPadding) + 'px')   
               .style('top', (event.pageY + vis.config.tooltipPadding) + 'px')
               .html(`
-                <div class="tooltip-title">${d.trail}</div>
-                <div><i>${d.region}</i></div>
+                <div class="tooltip-title">${d.pl_name}</div>
+                <div><i>${d.sys_name}</i></div>
                 <ul>
-                  <li>${d.distance} km, ~${d.time} hours</li>
-                  <li>${d.difficulty}</li>
-                  <li>${d.season}</li>
+                  <li>Mass: ${d.st_mass}</li>
+                  <li>Radius: ${d.st_rad}</li>
                 </ul>
               `);
           })

@@ -1,4 +1,4 @@
-let data, numStars, numPlanets, starType, discoveryMethod, habitability;
+let data, numStars, numPlanets, starType, discoveryMethod, habitability, histogram, disc, discoveryTime, scatterplot;
 
 /*
  *  Load data from CSV file
@@ -15,9 +15,9 @@ d3.csv('data/exoplanets-1.csv')
         numStars = new BarChart({
         'parentElement': '#barChart1',
         'colorScale' : colorScale1,
-        'containerHeight': 300,
-        'containerWidth': 600,
-        }, data, 'sy_snum', "Stars per system"); 
+        'containerHeight': 200,
+        'containerWidth': 400,
+        }, data, 'sy_snum', "Stars per system", false); 
         numStars.updateVis();
 
         // Bar chart #2: Number of exoplanets that are from systems with 1 planets, 2 planets, 3 planets, etc.
@@ -28,9 +28,9 @@ d3.csv('data/exoplanets-1.csv')
         numPlanets = new BarChart({
                 'parentElement': '#barChart2',
                 'colorScale' : colorScale2,
-                'containerHeight': 300,
-                'containerWidth': 600,
-                }, data, 'sy_pnum', "Planets per system"); 
+                'containerHeight': 200,
+                'containerWidth': 400,
+                }, data, 'sy_pnum', "Planets per system", false); 
                 numPlanets.updateVis();
 
         // Bar chart #3: Number of exoplanets that orbit stars of different types
@@ -51,9 +51,9 @@ d3.csv('data/exoplanets-1.csv')
         starType = new BarChart({
                 'parentElement': '#barChart3',
                 'colorScale' : colorScale3,
-                'containerHeight': 300,
-                'containerWidth': 600,
-                }, data, 'starTypeInitial', "Type of star"); 
+                'containerHeight': 200,
+                'containerWidth': 400,
+                }, data, 'starTypeInitial', "Type of star", false); 
                 starType.updateVis();
 
         // Bar chart #4: Number of exoplanets that were discovered by different methods
@@ -64,9 +64,9 @@ d3.csv('data/exoplanets-1.csv')
         discoveryMethod = new BarChart({
                 'parentElement': '#barChart4',
                 'colorScale' : colorScale4,
-                'containerHeight': 300,
-                'containerWidth': 1800,
-                }, data, 'discoverymethod', "Method of discovery"); 
+                'containerHeight': 200,
+                'containerWidth': 800,
+                }, data, 'discoverymethod', "Method of discovery", true); 
                 discoveryMethod.updateVis();
 
         // Bar chart #5: Number of exoplanets that are within a habitable zone vs outside the habitable zone
@@ -114,17 +114,44 @@ d3.csv('data/exoplanets-1.csv')
         habitability = new BarChart({
                 'parentElement': '#barChart5',
                 'colorScale' : colorScale5,
-                'containerHeight': 300,
-                'containerWidth': 600,
-                }, data, 'exoplanetHabitability', "Habitability of exoplanets"); 
+                'containerHeight': 200,
+                'containerWidth': 400,
+                }, data, 'exoplanetHabitability', "Habitability of exoplanets", false); 
                 habitability.updateVis();
 
 
-        // Histogram:
+        // Histogram: the distribution of exoplanets by their distance to us
+        histogram = new Histogram({ parentElement: '#histogram'}, data, 'Distance from Earth');
+        histogram.updateVis();
 
         // Line chart: exoplanet discoveries over time (by year)
+        let minYear = d3.min( data, d => d.disc_year);
+	let maxYear = d3.max( data, d=> d.disc_year );
+
+	disc = [];
+	for(let i = minYear; i < maxYear; i++){
+
+		let justOneYear = data.filter( d => d.disc_year == i );
+		let total = d3.count(justOneYear, d => d.disc_year);
+
+		disc.push( {"year": parseInt(i), "count": total});
+	}
+        
+        discoveryTime = new LineChart({
+		'parentElement': '#lineChart',
+		'containerHeight': 300,
+		'containerWidth': 400,
+	}, disc, 'Discoveries each year');
+	discoveryTime.updateVis();
 
         // Scatterplot: shows the relationships between exoplanet radius and mass
+        scatterplot = new ScatterPlot({ 
+		'parentElement': '#scatterplot',
+		'containerHeight': 200,
+		'containerWidth': 400,
+	  }, data);
+	  scatterplot.updateVis();
+
 	})
  	.catch(error => {
   		console.error(error);

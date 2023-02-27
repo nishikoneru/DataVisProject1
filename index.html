@@ -9,17 +9,24 @@
 <body>
     <h1> Project 1: Out of this World</h1>
     <h2> Nishidha Koneru</h2>
-    
+
+    <p>The purpose of this interactive visualization application is to help a general audience explore the thousands exoplanets discovered by the Kepler Space Telescope and other astronomical research facilities around the world in the past few decades.</p>
+    <p>The data can be found <a href = "https://exoplanetarchive.ipac.caltech.edu/cgi-bin/TblView/nph-tblView?app=ExoTbls&config=PS">here.</a></p>
+    <p>I used the D3.js library to visualize the data. </p>
+
     <!-- Add HTML content, SVG drawing area, ... -->
     <svg id="barChart1"></svg>
     <svg id="barChart2"></svg>
     <svg id="barChart3"></svg>
-    <svg id="barChart4"></svg>
     <svg id="barChart5"></svg>
+    <svg id="histogram"></svg>
+    <svg id="scatterplot"></svg>
     <svg id="lineChart"></svg>
+    <svg id="barChart4"></svg>
 
     <!-- D3 bundle -->
     <script src="js/d3.v6.min.js"></script>
+    <div id="tooltip"></div>
 
     <!-- Javascript code for each of our visualization objects --> 
     <script src="js/barchart.js"></script> 

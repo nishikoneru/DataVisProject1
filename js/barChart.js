@@ -1,8 +1,6 @@
 class BarChart {
-	/**
-	 * Class constructor with basic chart configuration
-	 */
-	constructor(_config, _data, _column, _columnname) {
+	
+	constructor(_config, _data, _column, _columnname, _rotate) {
 	  // Configuration object with defaults
 	  this.config = {
 		parentElement: _config.parentElement,
@@ -14,6 +12,7 @@ class BarChart {
 	  this.data = _data;
 	  this.column = _column;
 	  this.columnname = _columnname;
+	  this.rotate = _rotate;
 	  this.initVis();
 	}
 	
@@ -51,9 +50,15 @@ class BarChart {
 		  .tickSizeOuter(0)
   
 	  // Define size of SVG drawing area
-	  vis.svg = d3.select(vis.config.parentElement)
-		  .attr('width', vis.config.containerWidth)
-		  .attr('height', vis.config.containerHeight);
+	  if (vis.rotate){ //make extra space for rotated labels
+		vis.svg = d3.select(vis.config.parentElement)
+		  .attr('width', vis.config.containerWidth + 65)
+		  .attr('height', vis.config.containerHeight + 60);
+	  } else {
+		vis.svg = d3.select(vis.config.parentElement)
+		.attr('width', vis.config.containerWidth)
+		.attr('height', vis.config.containerHeight);
+	  }
   
 	  // SVG Group containing the actual chart; D3 margin convention
 	  vis.chart = vis.svg.append('g')
@@ -84,7 +89,6 @@ class BarChart {
 	  let vis = this;
   
 	  // Prepare data
-	  console.log(vis.data);
 	  let aggregatedDataMap = d3.rollups(vis.data, v => v.length, d => d[vis.column]);
       vis.aggregatedData = Array.from(aggregatedDataMap, ([key, count]) => ({ key, count }));
 
@@ -123,7 +127,16 @@ class BarChart {
 		  .attr('fill', d => vis.colorScale(vis.colorValue(d)))
   
 	  // Update axes
-	  vis.xAxisG.call(vis.xAxis);
+	  if (vis.rotate) {
+		vis.xAxisG.call(vis.xAxis)
+        .selectAll("text")
+        .style("text-anchor", "start")
+        .attr("dx", "0.75em")
+        .attr("dy", ".15em")
+        .attr("transform", "rotate(30)");
+	  } else {
+	  	vis.xAxisG.call(vis.xAxis);
+	  }
 	  vis.yAxisG.call(vis.yAxis);
 	}
   }
