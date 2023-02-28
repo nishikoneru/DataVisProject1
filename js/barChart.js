@@ -25,8 +25,6 @@ class BarChart {
 	  // Calculate inner chart size. Margin specifies the space around the actual chart.
 	  vis.width = vis.config.containerWidth - vis.config.margin.left - vis.config.margin.right;
 	  vis.height = vis.config.containerHeight - vis.config.margin.top - vis.config.margin.bottom;
-  
-	  // Initialize scales and axes
 	  
 	  // Initialize scales
 	  vis.colorScale = d3.scaleOrdinal()
@@ -50,7 +48,7 @@ class BarChart {
 		  .tickSizeOuter(0)
   
 	  // Define size of SVG drawing area
-	  if (vis.rotate){ //make extra space for rotated labels
+	  if (vis.rotate){
 		vis.svg = d3.select(vis.config.parentElement)
 		  .attr('width', vis.config.containerWidth + 65)
 		  .attr('height', vis.config.containerHeight + 60);
@@ -92,11 +90,16 @@ class BarChart {
 	  let aggregatedDataMap = d3.rollups(vis.data, v => v.length, d => d[vis.column]);
       vis.aggregatedData = Array.from(aggregatedDataMap, ([key, count]) => ({ key, count }));
 
+	  vis.aggregatedData.forEach(function(e){
+        e["title"] = vis.item;
+        e ["k"] = String(e.key) + vis.item;
+      });
+
       const orderedKeys = this.config.colorScale.domain();
       vis.aggregatedData = vis.aggregatedData.sort((a,b) => {
         return orderedKeys.indexOf(a.key) - orderedKeys.indexOf(b.key);
       });
-  
+
 	  // Specificy accessor functions
 	  vis.colorValue = d => d.key;
 	  vis.xValue = d => d.key;
@@ -125,6 +128,48 @@ class BarChart {
 		  .attr('height', d => vis.height - vis.yScale(vis.yValue(d)))
 		  .attr('y', d => vis.yScale(vis.yValue(d)))
 		  .attr('fill', d => vis.colorScale(vis.colorValue(d)))
+
+		  // Show additional information when user hovers over bar
+		  bars
+          .on('mouseover', (event,d) => {
+            d3.select('#tooltip')
+              .style('display', 'block')
+              .style('left', (event.pageX) + 'px')   
+              .style('top', (event.pageY) + 'px')
+              .html(`
+                <div class="tooltip-title">${this.columnname}: ${d.key}</div>
+                <div>Total: ${d.count}</div>
+              `);
+          })
+          .on('mouseleave', () => {
+            d3.select('#tooltip').style('display', 'none');
+          });
+
+		  // Transition
+		  bars
+          .merge(bars)
+          .transition()
+          .duration(1000)
+          .attr('x', d => vis.xScale(vis.xValue(d)))
+          .attr('width', vis.xScale.bandwidth())
+          .attr('height', d => vis.height - vis.yScale(vis.yValue(d)))
+          .attr('y', d => vis.yScale(vis.yValue(d)))
+          .attr('fill', d => vis.colorScale(vis.colorValue(d)));
+
+		  // Click bar to filter data
+		  bars.on('click', function(event, d) {
+			let fil = d.title + "," + d.key;
+			const isActive = filter.includes(fil);
+			if (isActive) {
+			  filter = filter.filter(f => f !== fil);
+			  d3.select(event.currentTarget).style("stroke", "none");
+			} else {
+			  filter.push(fil);
+			  d3.select(event.currentTarget).style("stroke", "#ffffff");
+			}
+			filterData();
+			d3.select(this).classed('active', !isActive);
+		});
   
 	  // Update axes
 	  if (vis.rotate) {

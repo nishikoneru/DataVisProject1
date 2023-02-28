@@ -105,7 +105,7 @@ class ScatterPlot {
           .attr('r', 4)
           .attr('cy', d => vis.yScale(vis.yValue(d)))
           .attr('cx', d => vis.xScale(vis.xValue(d)))
-          .attr('fill', '#945cb4')
+          .attr('fill', '#005b96')
   
   
       // Tooltip event listeners
@@ -116,8 +116,8 @@ class ScatterPlot {
               .style('left', (event.pageX + vis.config.tooltipPadding) + 'px')   
               .style('top', (event.pageY + vis.config.tooltipPadding) + 'px')
               .html(`
-                <div class="tooltip-title">${d.pl_name}</div>
-                <div><i>${d.sys_name}</i></div>
+                <div class="tooltip-title">Planet: ${d.pl_name}</div>
+                <div><i>System: ${d.sys_name}</i></div>
                 <ul>
                   <li>Mass: ${d.st_mass}</li>
                   <li>Radius: ${d.st_rad}</li>

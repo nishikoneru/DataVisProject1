@@ -110,7 +110,7 @@ class Histogram {
             .attr("height", function(d) {
                 return vis.height - vis.yScale(d.length);
             })
-            .style("fill", "#69b3a2")
+            .style("fill", "#131862")
 
 
         // Tooltip event listeners

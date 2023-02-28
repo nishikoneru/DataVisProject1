@@ -1,4 +1,5 @@
-let data, numStars, numPlanets, starType, discoveryMethod, habitability, histogram, disc, discoveryTime, scatterplot;
+let data, numStars, numPlanets, starType, discoveryMethod, habitability, histogram, discYearArray, discoveryTime, scatterplot;
+let filter = [];
 
 /*
  *  Load data from CSV file
@@ -10,7 +11,7 @@ d3.csv('data/exoplanets-1.csv')
         // Bar chart #1: Number of exoplanets that are from systems with 1 star, 2 stars, 3 stars, etc.
         const colorScale1 = d3.scaleOrdinal()
         .domain(['1', '2', '3', '4'])
-        .range(['#00076f', '#44008b', '#9f45b0', '#e54ed0']);
+        .range(['#6497b1', '#6497b1', '#6497b1', '#6497b1']);
 
         numStars = new BarChart({
         'parentElement': '#barChart1',
@@ -23,7 +24,7 @@ d3.csv('data/exoplanets-1.csv')
         // Bar chart #2: Number of exoplanets that are from systems with 1 planets, 2 planets, 3 planets, etc.
         const colorScale2 = d3.scaleOrdinal()
         .domain(['1', '2', '3', '4', '5', '6', '7', '8'])
-        .range(['#00076f', '#44008b', '#9f45b0', '#e54ed0', '#00076f', '#44008b', '#9f45b0', '#e54ed0']);
+        .range(['#146eb4', '#146eb4', '#146eb4', '#146eb4', '#146eb4', '#146eb4', '#146eb4', '#146eb4']);
 
         numPlanets = new BarChart({
                 'parentElement': '#barChart2',
@@ -46,7 +47,7 @@ d3.csv('data/exoplanets-1.csv')
 
         const colorScale3 = d3.scaleOrdinal()
         .domain(['A', 'F', 'G', 'K', 'M', 'Unknown'])
-        .range(['#4ebcff', '#2972b6', '#002790', '#945cb4', '#001d4f', '#4ebcff']);
+        .range(['#002790', '#002790', '#002790', '#002790', '#002790', '#002790']);
 
         starType = new BarChart({
                 'parentElement': '#barChart3',
@@ -59,7 +60,7 @@ d3.csv('data/exoplanets-1.csv')
         // Bar chart #4: Number of exoplanets that were discovered by different methods
         const colorScale4 = d3.scaleOrdinal()
         .domain(['Astrometry', 'Disk Kinematics', 'Eclipse Timing Variations', 'Imaging', 'Microlensing', 'Orbital Brightness Modulation', 'Pulsar Timing', 'Pulsation Timing Variations', 'Radial Velocity', 'Transit', 'Transit Timing Variations'])
-        .range(['#131862', '#2e4482', '#546bab', '#87889c', '#bea9de', '#131862', '#2e4482', '#546bab', '#87889c', '#bea9de', '#131862']);
+        .range(['#02577a', '#02577a', '#02577a', '#02577a', '#02577a', '#02577a', '#02577a', '#02577a', '#02577a', '#02577a', '#02577a']);
 
         discoveryMethod = new BarChart({
                 'parentElement': '#barChart4',
@@ -109,7 +110,7 @@ d3.csv('data/exoplanets-1.csv')
 
         const colorScale5 = d3.scaleOrdinal()
         .domain(['Habitable', 'Uninhabitable', 'Unknown'])
-        .range(['#131862', '#2e4482', '#546bab']);
+        .range(['#2e4482', '#2e4482', '#2e4482']);
 
         habitability = new BarChart({
                 'parentElement': '#barChart5',
@@ -128,20 +129,19 @@ d3.csv('data/exoplanets-1.csv')
         let minYear = d3.min( data, d => d.disc_year);
 	let maxYear = d3.max( data, d=> d.disc_year );
 
-	disc = [];
+	discYearArray = [];
 	for(let i = minYear; i < maxYear; i++){
 
-		let justOneYear = data.filter( d => d.disc_year == i );
-		let total = d3.count(justOneYear, d => d.disc_year);
-
-		disc.push( {"year": parseInt(i), "count": total});
+		let oneYear = data.filter( d => d.disc_year == i );
+		let total = d3.count(oneYear, d => d.disc_year);
+		discYearArray.push( {"year": parseInt(i), "count": total});
 	}
         
         discoveryTime = new LineChart({
 		'parentElement': '#lineChart',
 		'containerHeight': 300,
 		'containerWidth': 400,
-	}, disc, 'Discoveries each year');
+	}, discYearArray, 'Discoveries each year');
 	discoveryTime.updateVis();
 
         // Scatterplot: shows the relationships between exoplanet radius and mass
@@ -151,8 +151,46 @@ d3.csv('data/exoplanets-1.csv')
 		'containerWidth': 400,
 	  }, data);
 	  scatterplot.updateVis();
-
+          
 	})
  	.catch(error => {
   		console.error(error);
 	});
+
+        function filterData() {
+                numStars.data = data;
+                numPlanets.data = data;
+                starType.data = data;
+                habitability.data = data;
+                discoveryMethod.data = data;
+                let usedForFilter = [];
+                filter.forEach (f => {
+                        let info = f.split(",");
+                        if (!usedForFilter.includes(info[0])){
+                                usedForFilter.push (info[0])
+                        }
+                });
+                filter.forEach( f => {
+                        let info = f.split(",");
+                        if (!usedForFilter.includes("sy_snum")){
+                                numStars.data = numStars.data.filter(d => d[info[0]] == info[1]);
+                        }
+                        if (!usedForFilter.includes("sy_pnum")){
+                                numPlanets.data = numPlanets.data.filter(d => d[info[0]] == info[1]);
+                        }
+                        if (!usedForFilter.includes("tstarTypeInitialype")){
+                                starType.data = starType.data.filter(d => d[info[0]] == info[1]);
+                        }
+                        if (!usedForFilter.includes("exoplanetHabitability")){
+                                habitability.data = habitability.data.filter(d => d[info[0]] == info[1]);
+                        }
+                        if (!usedForFilter.includes("discoverymethod")){
+                                discoveryMethod.data = discoveryMethod.data.filter(d => d[info[0]] == info[1]);
+                        }
+                });
+                numStars.updateVis();
+                numPlanets.updateVis();
+                starType.updateVis();
+                habitability.updateVis();
+                discoveryMethod.updateVis();
+          }
