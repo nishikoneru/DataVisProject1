@@ -91,8 +91,8 @@ class BarChart {
       vis.aggregatedData = Array.from(aggregatedDataMap, ([key, count]) => ({ key, count }));
 
 	  vis.aggregatedData.forEach(function(e){
-        e["title"] = vis.item;
-        e ["k"] = String(e.key) + vis.item;
+        e["title"] = vis.column;
+        e ["k"] = String(e.key) + vis.column;
       });
 
       const orderedKeys = this.config.colorScale.domain();

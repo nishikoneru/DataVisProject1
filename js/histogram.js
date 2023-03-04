@@ -78,7 +78,7 @@ class Histogram {
                 return d.sy_dist;
             }) // I need to give the vector of value
             .domain(vis.xScale.domain()) // then the domain of the graphic
-            .thresholds(vis.xScale.ticks(5)); // then the numbers of bins
+            .thresholds(vis.xScale.ticks(20)); // then the numbers of bins
 
         // And apply this function to data to get the bins
         vis.bins = vis.histogram(vis.data);

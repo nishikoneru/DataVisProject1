@@ -18,7 +18,7 @@ d3.csv('data/exoplanets-1.csv')
         'colorScale' : colorScale1,
         'containerHeight': 200,
         'containerWidth': 400,
-        }, data, 'sy_snum', "Stars per system", false); 
+        }, data, 'sy_snum', "Stars per exoplanet system", false); 
         numStars.updateVis();
 
         // Bar chart #2: Number of exoplanets that are from systems with 1 planets, 2 planets, 3 planets, etc.
@@ -31,7 +31,7 @@ d3.csv('data/exoplanets-1.csv')
                 'colorScale' : colorScale2,
                 'containerHeight': 200,
                 'containerWidth': 400,
-                }, data, 'sy_pnum', "Planets per system", false); 
+                }, data, 'sy_pnum', "Planets per exoplanet system", false); 
                 numPlanets.updateVis();
 
         // Bar chart #3: Number of exoplanets that orbit stars of different types
@@ -54,7 +54,7 @@ d3.csv('data/exoplanets-1.csv')
                 'colorScale' : colorScale3,
                 'containerHeight': 200,
                 'containerWidth': 400,
-                }, data, 'starTypeInitial', "Type of star", false); 
+                }, data, 'starTypeInitial', "Type of star orbited", false); 
                 starType.updateVis();
 
         // Bar chart #4: Number of exoplanets that were discovered by different methods
